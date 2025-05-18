@@ -58,11 +58,14 @@ Weather API is a team of IT experts and data scientists that has been practising
 
 https://www.weatherapi.com/
 
-## Pipeline Scripts
+## DAG padrão
 
 ```
 dag.py
 ```
+> ⚠️ Por conta de possíveis problemas de permissão de escrita 'w' dentro das pastas/volumes do Airflow, é necessário alterar o docker-compose.yml para mapear algum volume para gravação do arquivo local como /data.
+> 
+> Para isso seguir a orientação a seguir utilizada na dag_local.py
 
 Esse código define um pipeline de ETL (Extração, Transformação e Carga) utilizando o Apache Airflow, que é executado automaticamente a cada minuto. 
 
@@ -74,7 +77,32 @@ O processo é dividido em três tarefas conectadas sequencialmente no DAG: extra
 
 O código também configura as credenciais da AWS diretamente no script (embora isso não seja recomendado em ambientes reais por questões de segurança).
 
-## Resultado
+Resultado
 
 Arquivo .txt sendo gravado no bucket S3:
 <img src="https://i.imgur.com/FSJX4O0.png" style="width:100%;height:auto"/>
+
+## DAG Local
+
+```
+dag_local.py
+```
+> ⚠️ Por conta de possíveis problemas de permissão de escrita 'w' dentro das pastas/volumes do Airflow, esse arquivo grava o arquivo local dentro do container worker do docker
+
+O trecho a seguir salva os dados transformados em um arquivo local dentro do container worker do Docker (não fica visível nos arquivos locais)
+```
+local_file_path = f'./dados_previsao_tempo_{timestamp}.txt'
+```
+
+
+Para acessar o conteúdo dos arquivos dentro do container docker
+```
+sudo docker exec -it [id do container worker] /bin/bash
+```
+Listar arquivos
+```
+ls -l
+```
+Arquivo .txt sendo gravado dentro do container worker do Docker:
+<img src="https://i.imgur.com/Qz30mcs.png" style="width:100%;height:auto"/>
+
